@@ -22,7 +22,7 @@
       .replace(/\[/g, "\\[")
       .replace(/\]/g, "\\]")
       .replace(/\-/g, "\\-")
-    // Turn * into the match everything wildcard
+      // Turn * into the match everything wildcard
       .replace(/\*/g, ".*");
     return new RegExp("^" + reStr + "$");
   }
