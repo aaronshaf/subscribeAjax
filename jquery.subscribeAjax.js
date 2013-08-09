@@ -34,13 +34,25 @@
         return true;
       }
 
+      var type = options.type.toLowerCase();
+
       var cache = localStorage.getItem('subscribeAjaxCache');
       if(typeof cache === 'undefined' || !cache) {
         return true;
-      } else {
-        cache = JSON.parse(cache);
-        if(typeof cache[options.url] !== 'undefined') {
+      }
+      cache = JSON.parse(cache);
+
+      // Repair cache if necessary
+      if(typeof cache !== 'object') {
+        localStorage.setItem('subscribeAjaxCache','{}');
+        return true;
+      }
+
+      if(typeof cache[options.url] !== 'undefined') {
+        if(type === 'get') {
           options.success(cache[options.url]);
+        } else {
+          delete cache[options.url];
         }
       }
     });
