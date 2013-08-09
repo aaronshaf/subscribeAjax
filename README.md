@@ -1,2 +1,1 @@
-subscribeAjax
-=============
+jQuery.subscribeAjax is magic fairy dust sprinkles for your XHR.

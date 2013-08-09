@@ -61,6 +61,6 @@
       localStorage.setItem('subscribeAjaxCache',JSON.stringify(cache));
 
       return true;
-    });    
+    });
   };
 }(jQuery));
