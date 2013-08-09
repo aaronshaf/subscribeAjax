@@ -35,6 +35,17 @@
         return true;
       }
 
+      window.addEventListener('storage', function(event) {
+        if(event.key !== 'subscribeAjaxCacheMessaging'
+            || !event.newValue
+            || event.newValue !== options.url) return;
+        var cache = localStorage.getItem('subscribeAjaxCache');
+        if(typeof cache === 'undefined' || !cache) return true;
+        cache = JSON.parse(cache);
+        if(typeof cache[options.url] === 'undefined' || typeof cache !== 'object') return;
+        options.success(cache[options.url]);
+      },false);
+
       var type = options.type.toLowerCase();
 
       var cache = localStorage.getItem('subscribeAjaxCache');
@@ -70,8 +81,10 @@
         cache = JSON.parse(cache);
       }
       cache[settings.url] = request.responseJSON;
+      //cache['123'] = Math.random(); // use with debugging cross-window/tab updates
 
       localStorage.setItem('subscribeAjaxCache',JSON.stringify(cache));
+      localStorage.setItem('subscribeAjaxCacheMessaging',settings.url);
 
       return true;
     });
