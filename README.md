@@ -6,8 +6,8 @@ $.subscribeAjax([
 ]);
 ```
 
-Now, when you do a matching GET request, the result will be cached and published to other windows/tabs.
+Now, when you do a matching GET request, the result will be cached and published to other windows/tabs on the same domain.
 
-Subsequent calls can optionally use cache to initially run the success callback, and then run it again if the XHR response is different.
+If enabled, subsequent calls can use cache to initially run the success callback, then run it again if the XHR response is different.
 
 Be sure to write your success callbacks for jQuery.ajax so that they can be run multiple times.
