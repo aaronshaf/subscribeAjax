@@ -1,5 +1,6 @@
 ;(function(jQuery) {
   // https://github.com/fitzgen/glob-to-regexp/blob/master/index.js
+  // BSD license
   var globToExp = function (glob) {
     var reStr = glob
     // Escape existing regular expression syntax
