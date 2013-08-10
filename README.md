@@ -3,9 +3,12 @@ jQuery.subscribeAjax is magic fairy dust sprinkles for your XHR. It speeds up yo
 Less ![spinning](http://www3.uni-bonn.de/spinner.gif "Spinner"). More _voom voom_.
 
 ```javascript
-$.subscribeAjax([
-  '/api/users/*'
-]);
+$.subscribeAjax({
+	cache: true,
+	routes: [
+	  '/api/users/*'
+	]
+});
 ```
 
 Now, when you do a matching GET request, the result will be cached and published to other windows/tabs on the same domain.
