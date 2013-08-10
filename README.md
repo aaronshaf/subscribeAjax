@@ -1,6 +1,6 @@
 jQuery.subscribeAjax is magic fairy dust sprinkles for your XHR. It speeds up your app.
 
-Less spinning. More _voom voom_.
+Less ![spinning](http://www3.uni-bonn.de/spinner.gif "Spinner"). More _voom voom_.
 
 ```javascript
 $.subscribeAjax([
