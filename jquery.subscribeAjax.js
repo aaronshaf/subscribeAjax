@@ -27,9 +27,12 @@
     return new RegExp("^" + reStr + "$");
   }
 
-  jQuery.subscribeAjax = function(globs) {
+  jQuery.subscribeAjax = function(options) {
+    var routes = options.routes || [];
+    var cache = !!options.cache;
+
     $.ajaxPrefilter(function(options) {
-      if(!globs.some(function(glob) {
+      if(!routes.some(function(glob) {
         if(glob instanceof RegExp) {
           return glob.test(options.url);
         } else {
@@ -41,24 +44,26 @@
 
       var type = options.type.toLowerCase();
 
-      var cache = localStorage.getItem('subscribeAjaxCache');
-      if(typeof cache === 'undefined' || !cache) {
+      var subscribeAjaxCache = localStorage.getItem('subscribeAjaxCache');
+      if(typeof subscribeAjaxCache === 'undefined' || !subscribeAjaxCache) {
         return true;
       }
-      cache = JSON.parse(cache);
+      subscribeAjaxCache = JSON.parse(subscribeAjaxCache);
 
       // Repair cache if necessary
-      if(typeof cache !== 'object') {
+      if(typeof subscribeAjaxCache !== 'object') {
         localStorage.setItem('subscribeAjaxCache','{}');
         return true;
       }
 
-      if(typeof cache[options.url] !== 'undefined') {
+      if(typeof subscribeAjaxCache[options.url] !== 'undefined') {
         if(type === 'get') {
-          options.alreadySent = cache[options.url];
-          options.success(cache[options.url]);
+          if(cache) {
+            options.alreadySent = subscribeAjaxCache[options.url];
+            options.success(subscribeAjaxCache[options.url]);  
+          }
         } else {
-          delete cache[options.url];
+          delete subscribeAjaxCache[options.url];
         }
       }
 
@@ -93,11 +98,11 @@
         newValue = newValue[0];
         if(newValue !== options.url) return false;
 
-        var cache = localStorage.getItem('subscribeAjaxCache');
-        if(typeof cache === 'undefined' || !cache) return true;
-        cache = JSON.parse(cache);
-        if(typeof cache[options.url] === 'undefined' || typeof cache !== 'object') return;
-        _success(cache[options.url]);
+        var subscribeAjaxCache = localStorage.getItem('subscribeAjaxCache');
+        if(typeof subscribeAjaxCache === 'undefined' || !subscribeAjaxCache) return true;
+        subscribeAjaxCache = JSON.parse(subscribeAjaxCache);
+        if(typeof subscribeAjaxCache[options.url] === 'undefined' || typeof subscribeAjaxCache !== 'object') return;
+        _success(subscribeAjaxCache[options.url]);
       },false);
     });
   };

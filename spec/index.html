@@ -5,9 +5,12 @@
   </head>
   <body>
     <script>
-      $.subscribeAjax([
-        '/api/records/*'
-      ]);
+      $.subscribeAjax({
+        cache: true,
+        routes: [
+          '/api/records/*'
+        ]
+      });
 
       $.getJSON('/api/records/index.json',function(data) {
         console.log(data);
