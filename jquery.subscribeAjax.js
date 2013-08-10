@@ -30,7 +30,11 @@
   jQuery.subscribeAjax = function(globs) {
     $.ajaxPrefilter(function(options) {
       if(!globs.some(function(glob) {
-        return globToExp(glob).test(options.url)
+        if(glob instanceof RegExp) {
+          return glob.test(options.url);
+        } else {
+          return globToExp(glob).test(options.url)  
+        }
       }) || !options.success) {
         return true;
       }
