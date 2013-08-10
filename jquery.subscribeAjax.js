@@ -3,7 +3,7 @@
   // BSD license
   var globToExp = function (glob) {
     var reStr = glob
-    // Escape existing regular expression syntax
+      // Escape existing regular expression syntax
       .replace(/\\/g, "\\\\")
       .replace(/\//g, "\\/")
       .replace(/\^/g, "\\^")
@@ -75,7 +75,6 @@
           cache = JSON.parse(cache);
         }
         cache[options.url] = data;
-        //cache['123'] = Math.random(); // use with debugging cross-window/tab updates
 
         localStorage.setItem('subscribeAjaxCache',JSON.stringify(cache));
 
