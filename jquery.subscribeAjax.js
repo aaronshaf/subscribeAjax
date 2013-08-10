@@ -1,4 +1,4 @@
-;(function(jQuery) {
+;(function(jQuery,localStorage) {
   // https://github.com/fitzgen/glob-to-regexp/blob/master/index.js
   // BSD license
   var globToExp = function (glob) {
@@ -106,4 +106,4 @@
       },false);
     });
   };
-}(jQuery));
+}(jQuery,window.localStorage));
