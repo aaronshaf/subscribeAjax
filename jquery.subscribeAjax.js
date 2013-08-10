@@ -31,20 +31,9 @@
     $.ajaxPrefilter(function(options) {
       if(!globs.some(function(glob) {
         return globToExp(glob).test(options.url)
-      })) {
+      }) || !options.success) {
         return true;
       }
-
-      window.addEventListener('storage', function(event) {
-        if(event.key !== 'subscribeAjaxCacheMessaging'
-            || !event.newValue
-            || event.newValue !== options.url) return;
-        var cache = localStorage.getItem('subscribeAjaxCache');
-        if(typeof cache === 'undefined' || !cache) return true;
-        cache = JSON.parse(cache);
-        if(typeof cache[options.url] === 'undefined' || typeof cache !== 'object') return;
-        options.success(cache[options.url]);
-      },false);
 
       var type = options.type.toLowerCase();
 
@@ -62,31 +51,51 @@
 
       if(typeof cache[options.url] !== 'undefined') {
         if(type === 'get') {
+          options.alreadySent = cache[options.url];
           options.success(cache[options.url]);
         } else {
           delete cache[options.url];
         }
       }
-    });
 
-    $(document).ajaxSuccess(function(event, request, settings) {
-      if(settings.type.toLowerCase() !== 'get' || settings.dataType.toLowerCase() !== 'json') {
+      var _success = options.success;
+      options.success = function(data,textStatus,xhr) {
+        if(JSON.stringify(options.alreadySent) === JSON.stringify(data)) {
+          return false;
+        }
+
+        var cache = localStorage.getItem('subscribeAjaxCache');
+        if(typeof cache === 'undefined' || !cache) {
+          cache = {};
+        } else {
+          cache = JSON.parse(cache);
+        }
+        cache[options.url] = data;
+        //cache['123'] = Math.random(); // use with debugging cross-window/tab updates
+
+        localStorage.setItem('subscribeAjaxCache',JSON.stringify(cache));
+
+        // If we don't add the random text, localStorage may not fire change event
+        localStorage.setItem('subscribeAjaxCacheMessenger',options.url + '```' + Math.random());
+
+        _success.apply(this,arguments);
         return true;
       }
 
-      var cache = localStorage.getItem('subscribeAjaxCache');
-      if(typeof cache === 'undefined' || !cache) {
-        cache = {};
-      } else {
+      window.addEventListener('storage', function(event) {
+        if(event.key !== 'subscribeAjaxCacheMessenger'
+            || !event.newValue) return false;
+
+        var newValue = event.newValue.split('```');
+        newValue = newValue[0];
+        if(newValue !== options.url) return false;
+
+        var cache = localStorage.getItem('subscribeAjaxCache');
+        if(typeof cache === 'undefined' || !cache) return true;
         cache = JSON.parse(cache);
-      }
-      cache[settings.url] = request.responseJSON;
-      //cache['123'] = Math.random(); // use with debugging cross-window/tab updates
-
-      localStorage.setItem('subscribeAjaxCache',JSON.stringify(cache));
-      localStorage.setItem('subscribeAjaxCacheMessaging',settings.url);
-
-      return true;
+        if(typeof cache[options.url] === 'undefined' || typeof cache !== 'object') return;
+        _success(cache[options.url]);
+      },false);
     });
   };
 }(jQuery));
